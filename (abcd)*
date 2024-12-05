@@ -1,0 +1,12 @@
+(abcd)* Nondeterministic
+q1,q2,q3,q4,qaccept
+a,b,c,d
+a,b,c,d,_
+q1
+qaccept
+qreject
+q1,a,q2,a,R
+q2,b,q3,b,R
+q3,c,q4,c,R
+q4,d,q1,d,R
+q1,_,qaccept,_,R
