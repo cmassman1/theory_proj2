@@ -1,0 +1,9 @@
+a_plus
+q1,qaccept
+a
+a,_
+q1
+qaccept
+qreject
+q1,a,q1,a,R
+q1,_,qaccept,_,R
