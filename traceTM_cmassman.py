@@ -20,7 +20,7 @@ def parse_csv(filename):
             transitions[key].append((new_state, write.strip(), move.strip()))
         return headers, transitions
 
-def simulate_ntm_bfs(filename, input_string, max_depth=10, max_transitions=100):
+def simulate_ntm_bfs(filename, input_string, max_depth=10, max_transitions=100, output_file=None):
     """Simulates a Non-Deterministic Turing Machine using BFS."""
     headers, transitions = parse_csv(filename)
     machine_name = headers[0][0]
@@ -28,20 +28,25 @@ def simulate_ntm_bfs(filename, input_string, max_depth=10, max_transitions=100):
     accept_state = headers[5][0]
     reject_state = headers[6][0]
 
-    print(f"Machine: {machine_name}")
-    print(f"Input string: {input_string}")
+    def write_output(message):
+        if output_file:
+            output_file.write(message + '\n')
+        else:
+            print(message)
 
-    # Reject the empty string immediately for a+ since it requires at least one 'a'
+    write_output(f"Machine: {machine_name}")
+    write_output(f"Input string: {input_string}")
+
     if not input_string.strip():
-        print("String rejected immediately: input is empty and does not satisfy the language.")
-        print("Depth of the tree of configurations: 0")
-        print("Total transitions simulated: 0")
+        write_output("String rejected immediately: input is empty and does not satisfy the language.")
+        write_output("Depth of the tree of configurations: 0")
+        write_output("Total transitions simulated: 0")
         return False
 
     tree = [[("", start_state, input_string)]]
     total_transitions = 0
     accepting_path = []
-    visited_configs = set()  # Track visited configurations
+    visited_configs = set()
     accept_found = False
 
     for depth in range(max_depth):
@@ -53,36 +58,30 @@ def simulate_ntm_bfs(filename, input_string, max_depth=10, max_transitions=100):
             left, state, right = config
             total_transitions += 1
 
-            # Skip already visited configurations
             if config in visited_configs:
                 continue
             visited_configs.add(config)
 
-            # Accept if in accept state and tape is empty
             if state == accept_state and not right:
-                if not accept_found:  # Add to accepting path only once
+                if not accept_found:
                     accepting_path = tree[:depth + 1] + [[config]]
                 accept_found = True
-                break  # Stop processing other configs once accept found
+                break
 
-            # Skip if in reject state
             if state == reject_state:
                 continue
 
-            # Handle blank symbol if right part of tape is empty
             char = right[0] if right else '_'
 
-            # Check if there are transitions for this state and character
             if (state, char) in transitions:
                 for new_state, write, move in transitions[(state, char)]:
-                    # Modify tape based on write and move
                     if move == 'R':
                         new_left = left + write
                         new_right = right[1:]
                     elif move == 'L':
                         new_left = left[:-1] if left else ''
                         new_right = (left[-1] if left else '') + write + right[1:]
-                    else:  # Stay in place
+                    else:
                         new_left = left
                         new_right = write + right[1:]
 
@@ -92,36 +91,33 @@ def simulate_ntm_bfs(filename, input_string, max_depth=10, max_transitions=100):
                         any_path_continues = True
 
         if accept_found:
-            print(f"String accepted in {len(accepting_path) - 1} transitions.")
-            print("Configuration Path:")
-            # Use a set to track printed configurations
+            write_output(f"String accepted in {len(accepting_path) - 1} transitions.")
+            write_output("Configuration Path:")
             printed_configs = set()
             for d, level in enumerate(accepting_path):
                 for config in level:
                     left, state, right = config
                     head_char = right[0] if right else "_"
                     config_str = f"[{left}], ({state}), [{head_char + right[1:] if right else ''}]"
-                    # Only print if not already printed
                     if config_str not in printed_configs:
-                        print(config_str)
+                        write_output(config_str)
                         printed_configs.add(config_str)
-            
-            print(f"Depth of the tree of configurations: {len(accepting_path) - 1}")
-            print(f"Total transitions simulated: {total_transitions}")
+            write_output(f"Depth of the tree of configurations: {len(accepting_path) - 1}")
+            write_output(f"Total transitions simulated: {total_transitions}")
             return True
 
         if not any_path_continues:
-            print(f"String rejected in {depth + 1} steps.")
-            print(f"Depth of the tree of configurations: {depth + 1}")
-            print(f"Total transitions simulated: {total_transitions}")
+            write_output(f"String rejected in {depth + 1} steps.")
+            write_output(f"Depth of the tree of configurations: {depth + 1}")
+            write_output(f"Total transitions simulated: {total_transitions}")
             return False
 
         if depth < max_depth:
             tree.append(next_level)
 
-    print(f"Execution stopped after {max_depth} steps.")
-    print(f"Depth of the tree of configurations: {max_depth}")
-    print(f"Total transitions simulated: {total_transitions}")
+    write_output(f"Execution stopped after {max_depth} steps.")
+    write_output(f"Depth of the tree of configurations: {max_depth}")
+    write_output(f"Total transitions simulated: {total_transitions}")
     return False
 
 def process_multiple_csv_files():
@@ -135,9 +131,10 @@ def process_multiple_csv_files():
         ("abcd_star_cmassman.csv", "abcd")
     ]
 
-    for csv_file, input_string in csv_files:
-        print(f"\nProcessing {csv_file} with input: {input_string}")
-        simulate_ntm_bfs(csv_file, input_string, max_depth=10)
+    with open("outputfile_cmassman.txt", "w") as output_file:
+        for csv_file, input_string in csv_files:
+            output_file.write(f"\nProcessing {csv_file} with input: {input_string}\n")
+            simulate_ntm_bfs(csv_file, input_string, max_depth=10, output_file=output_file)
 
 # Example usage
 if __name__ == "__main__":
