@@ -127,12 +127,12 @@ def simulate_ntm_bfs(filename, input_string, max_depth=10, max_transitions=100):
 def process_multiple_csv_files():
     """Processes multiple CSV files in the directory."""
     csv_files = [
-        ("abc_star.csv", "abcab"),
-        ("abc_star.csv", "abc"),
-        ("a_plus.csv", ""),
-        ("a_plus.csv", "aaa"),
-        ("abcd_star.csv", "adcd"),
-        ("abcd_star.csv", "abcd")
+        ("abc_star_cmassman.csv", "abcab"),
+        ("abc_star_cmassman.csv", "abc"),
+        ("a_plus_cmassman.csv", ""),
+        ("a_plus_cmassman.csv", "aaa"),
+        ("abcd_star_cmassman.csv", "adcd"),
+        ("abcd_star_cmassman.csv", "abcd")
     ]
 
     for csv_file, input_string in csv_files:
