@@ -1,0 +1,67 @@
+
+Processing abc_star_cmassman.csv with input: abcab
+Machine: a*b*c* Nondeterministic
+Input string: abcab
+String rejected in 4 steps.
+Depth of the tree of configurations: 4
+Total transitions simulated: 13
+
+Processing abc_star_cmassman.csv with input: abc
+Machine: a*b*c* Nondeterministic
+Input string: abc
+String accepted in 5 transitions.
+Configuration Path:
+[], (q0), [abc]
+[a], (q0), [bc]
+[a], (q1), [bc]
+[a], (q2), [bc]
+[a], (q3), [bc]
+[ab], (q1), [c]
+[ab], (q2), [c]
+[ab], (q3), [c]
+[abc], (q2), []
+[abc], (q3), []
+[abc_], (qacc), []
+Depth of the tree of configurations: 5
+Total transitions simulated: 14
+
+Processing a_plus_cmassman.csv with input: 
+Machine: a_plus
+Input string: 
+String rejected immediately: input is empty and does not satisfy the language.
+Depth of the tree of configurations: 0
+Total transitions simulated: 0
+
+Processing a_plus_cmassman.csv with input: aaa
+Machine: a_plus
+Input string: aaa
+String accepted in 5 transitions.
+Configuration Path:
+[], (q1), [aaa]
+[a], (q1), [aa]
+[aa], (q1), [a]
+[aaa], (q1), []
+[aaa_], (qaccept), []
+Depth of the tree of configurations: 5
+Total transitions simulated: 5
+
+Processing abcd_star_cmassman.csv with input: adcd
+Machine: (abcd)* Nondeterministic
+Input string: adcd
+String rejected in 2 steps.
+Depth of the tree of configurations: 2
+Total transitions simulated: 2
+
+Processing abcd_star_cmassman.csv with input: abcd
+Machine: (abcd)* Nondeterministic
+Input string: abcd
+String accepted in 6 transitions.
+Configuration Path:
+[], (q1), [abcd]
+[a], (q2), [bcd]
+[ab], (q3), [cd]
+[abc], (q4), [d]
+[abcd], (q1), []
+[abcd_], (qaccept), []
+Depth of the tree of configurations: 6
+Total transitions simulated: 6
