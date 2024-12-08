@@ -1,9 +1,8 @@
-import csv
-import os
-
-# Parsing function for reading the NTM CSV file
 def parse_csv(filename):
     """Parses the NTM (Non-Deterministic Turing Machine) definition from a CSV file."""
+    import os
+    import csv
+
     if not os.path.exists(filename):
         raise FileNotFoundError(f"Error: File '{filename}' not found.")
 
@@ -25,8 +24,7 @@ def parse_csv(filename):
 
         return headers, transitions
 
-# BFS simulation function
-def simulate_ntm_bfs(filename, input_string, max_depth=10, max_transitions=100, output_file=None):
+def simulate_ntm_bfs(filename, input_string, max_depth=10, max_transitions=100, output_file_path="outputfile_cmassman.txt"):
     """Simulates a Non-Deterministic Turing Machine using BFS."""
     headers, transitions = parse_csv(filename)
     machine_name = headers[0][0]
@@ -35,12 +33,13 @@ def simulate_ntm_bfs(filename, input_string, max_depth=10, max_transitions=100, 
     reject_state = headers[6][0]
 
     def write_output(message):
-        """Writes output to a file or prints to console."""
-        if output_file:
+        """Writes output to a file and prints to console."""
+        with open(output_file_path, "a") as output_file:
             output_file.write(message + '\n')
-        else:
-            print(message)
+        print(message)  # Also prints to console for live tracking
 
+    # Log initial details
+    write_output(f"Processing {filename} with input: {input_string}")
     write_output(f"Machine: {machine_name}")
     write_output(f"Input string: {input_string}")
 
@@ -50,27 +49,28 @@ def simulate_ntm_bfs(filename, input_string, max_depth=10, max_transitions=100, 
         write_output("Total transitions simulated: 0")
         return False
 
+    # BFS simulation initialization
     tree = [[("", start_state, input_string)]]
     total_transitions = 0
     visited_configs = set()
     accept_found = False
 
     def calculate_nondeterminism(tree):
-        """Calculates the nondeterminism metric based on BFS tree structure."""
-        total_branches = sum(len(level) for level in tree)
-        num_levels = len(tree)
-        if num_levels == 0:
-            return 0.0
-        return round(total_branches / num_levels, 2)
+        """Calculates nondeterminism as the average branching factor."""
+        total_configs = sum(len(level) for level in tree)
+        depth = len(tree)
+        return total_configs / depth if depth > 0 else 0
 
     for depth in range(max_depth):
         current_level = tree[-1]
         next_level = []
         any_path_continues = False
 
+        write_output(f"\nDepth {depth}:")
         for config in current_level:
             left, state, right = config
             total_transitions += 1
+            write_output(f"[{left}], ({state}), [{right}]")
 
             if config in visited_configs:
                 continue
@@ -85,7 +85,6 @@ def simulate_ntm_bfs(filename, input_string, max_depth=10, max_transitions=100, 
                 continue
 
             char = right[0] if right else '_'
-
             if (state, char) in transitions:
                 for new_state, write, move in transitions[(state, char)]:
                     if move == 'R':
@@ -104,38 +103,32 @@ def simulate_ntm_bfs(filename, input_string, max_depth=10, max_transitions=100, 
                         any_path_continues = True
 
         if accept_found:
-            nondeterminism_value = calculate_nondeterminism(tree)
-            interpret_nondeterminism(nondeterminism_value, write_output)
+            nondeterminism = calculate_nondeterminism(tree)
+            write_output(f"\nDepth of configuration tree: {depth + 1}")
+            write_output(f"Total transitions simulated: {total_transitions}")
+            write_output(f"Degree of nondeterminism: {nondeterminism:.2f}")
+            write_output(f"String accepted in {depth + 1} transitions")
             return True
 
         if not any_path_continues:
-            write_output(f"String rejected in {depth + 1} steps.")
-            nondeterminism_value = calculate_nondeterminism(tree)
-            interpret_nondeterminism(nondeterminism_value, write_output)
+            write_output(f"\nDepth of configuration tree: {depth + 1}")
+            write_output(f"Total transitions simulated: {total_transitions}")
+            write_output(f"Degree of nondeterminism: {calculate_nondeterminism(tree):.2f}")
+            write_output("String rejected.")
             return False
 
         if depth < max_depth:
             tree.append(next_level)
 
-    write_output(f"Execution stopped after {max_depth} steps.")
-    nondeterminism_value = calculate_nondeterminism(tree)
-    interpret_nondeterminism(nondeterminism_value, write_output)
+    write_output("\nExecution stopped: Max depth reached.")
+    write_output(f"Depth of configuration tree: {max_depth}")
+    write_output(f"Total transitions simulated: {total_transitions}")
+    write_output(f"Degree of nondeterminism: {calculate_nondeterminism(tree):.2f}")
     return False
 
-def interpret_nondeterminism(value, write_output):
-    """Interprets and prints the nondeterminism level."""
-    write_output(f"Nondeterminism Metric: {value}")
-    if value == 1.0:
-        write_output("Computation was deterministic.")
-    elif value < 1.5:
-        write_output("Slight nondeterministic behavior observed.")
-    elif value < 3.0:
-        write_output("Moderate nondeterministic exploration.")
-    else:
-        write_output("Highly nondeterministic computation with extensive alternative paths.")
 
-# Processes multiple CSV files
 def process_multiple_csv_files():
+    """Processes multiple CSV files and runs the NTM simulation."""
     csv_files = [
         ("abc_star_cmassman.csv", "abcab"),
         ("abc_star_cmassman.csv", "abc"),
@@ -145,12 +138,19 @@ def process_multiple_csv_files():
         ("abcd_star_cmassman.csv", "abcd")
     ]
 
+    # Clear the output file before starting
     with open("outputfile_cmassman.txt", "w") as output_file:
-        for csv_file, input_string in csv_files:
-            output_file.write(f"\nProcessing {csv_file} with input: {input_string}\n")
-            simulate_ntm_bfs(csv_file, input_string, max_depth=10, output_file=output_file)
+        output_file.write("")  # Clear any existing content
+
+    # Run the simulations and add blank lines between outputs
+    for csv_file, input_string in csv_files:
+        simulate_ntm_bfs(csv_file, input_string, max_depth=10)
+        with open("outputfile_cmassman.txt", "a") as output_file:
+            output_file.write("\n\n")  # Adds two blank lines after each test case
+
 
 # Main execution
 if __name__ == "__main__":
     process_multiple_csv_files()
+
 
