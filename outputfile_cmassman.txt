@@ -1,16 +1,67 @@
-
 Processing abc_star_cmassman.csv with input: abcab
 Machine: a*b*c* Nondeterministic
 Input string: abcab
-String rejected in 4 steps.
-Nondeterminism Metric: 3.25
-Highly nondeterministic computation with extensive alternative paths.
+
+Depth 0:
+[], (q0), [abcab]
+
+Depth 1:
+[a], (q0), [bcab]
+[a], (q1), [bcab]
+[a], (q2), [bcab]
+[a], (q3), [bcab]
+
+Depth 2:
+[ab], (q1), [cab]
+[ab], (q2), [cab]
+[ab], (q3), [cab]
+[ab], (q1), [cab]
+[ab], (q2), [cab]
+[ab], (q3), [cab]
+
+Depth 3:
+[abc], (q2), [ab]
+[abc], (q3), [ab]
+
+Depth of configuration tree: 4
+Total transitions simulated: 13
+Degree of nondeterminism: 3.25
+String rejected.
+
 
 Processing abc_star_cmassman.csv with input: abc
 Machine: a*b*c* Nondeterministic
 Input string: abc
-Nondeterminism Metric: 2.5
-Moderate nondeterministic exploration.
+
+Depth 0:
+[], (q0), [abc]
+
+Depth 1:
+[a], (q0), [bc]
+[a], (q1), [bc]
+[a], (q2), [bc]
+[a], (q3), [bc]
+
+Depth 2:
+[ab], (q1), [c]
+[ab], (q2), [c]
+[ab], (q3), [c]
+[ab], (q1), [c]
+[ab], (q2), [c]
+[ab], (q3), [c]
+
+Depth 3:
+[abc], (q2), []
+[abc], (q3), []
+
+Depth 4:
+[abc_], (qacc), []
+
+Depth of configuration tree: 5
+Total transitions simulated: 14
+Degree of nondeterminism: 2.50
+String accepted in 5 transitions
+
 
 Processing a_plus_cmassman.csv with input: 
 Machine: a_plus
@@ -19,22 +70,71 @@ String rejected immediately: input is empty and does not satisfy the language.
 Depth of the tree of configurations: 0
 Total transitions simulated: 0
 
+
 Processing a_plus_cmassman.csv with input: aaa
 Machine: a_plus
 Input string: aaa
-Nondeterminism Metric: 1.0
-Computation was deterministic.
+
+Depth 0:
+[], (q1), [aaa]
+
+Depth 1:
+[a], (q1), [aa]
+
+Depth 2:
+[aa], (q1), [a]
+
+Depth 3:
+[aaa], (q1), []
+
+Depth 4:
+[aaa_], (qaccept), []
+
+Depth of configuration tree: 5
+Total transitions simulated: 5
+Degree of nondeterminism: 1.00
+String accepted in 5 transitions
+
 
 Processing abcd_star_cmassman.csv with input: adcd
 Machine: (abcd)* Nondeterministic
 Input string: adcd
-String rejected in 2 steps.
-Nondeterminism Metric: 1.0
-Computation was deterministic.
+
+Depth 0:
+[], (q1), [adcd]
+
+Depth 1:
+[a], (q2), [dcd]
+
+Depth of configuration tree: 2
+Total transitions simulated: 2
+Degree of nondeterminism: 1.00
+String rejected.
+
 
 Processing abcd_star_cmassman.csv with input: abcd
 Machine: (abcd)* Nondeterministic
 Input string: abcd
-Nondeterminism Metric: 1.0
-Computation was deterministic.
 
+Depth 0:
+[], (q1), [abcd]
+
+Depth 1:
+[a], (q2), [bcd]
+
+Depth 2:
+[ab], (q3), [cd]
+
+Depth 3:
+[abc], (q4), [d]
+
+Depth 4:
+[abcd], (q1), []
+
+Depth 5:
+[abcd_], (qaccept), []
+
+Depth of configuration tree: 6
+Total transitions simulated: 6
+Degree of nondeterminism: 1.00
+String accepted in 6 transitions
