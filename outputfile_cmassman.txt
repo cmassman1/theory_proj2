@@ -138,3 +138,6 @@ Depth of configuration tree: 6
 Total transitions simulated: 6
 Degree of nondeterminism: 1.00
 String accepted in 6 transitions
+
+
+
